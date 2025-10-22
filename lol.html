@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>리그오브레전드 일정 - e스포츠 대회</title>
+    <link rel="stylesheet" href="assets/styles.css">
+  </head>
+  <body>
+    <header class="site-header">
+      <h1><a class="title-link" href="index.html">e스포츠 대회</a></h1>
+      <nav class="game-buttons">
+        <a class="btn" href="valorant.html">발로란트</a>
+      </nav>
+    </header>
+
+    <main class="container">
+      <section class="calendar-section">
+        <div class="calendar-header"><strong id="monthLabel"></strong></div>
+        <div id="calendar"></div>
+      </section>
+      <aside class="event-list" id="eventList">
+        <h2>LoL 일정</h2>
+        <ul id="events"></ul>
+      </aside>
+    </main>
+
+    <script>window.__GAME_FILTER = 'lol'</script>
+    <script src="assets/script.js"></script>
+  </body>
+</html>
