@@ -1,15 +1,7 @@
 // Simple calendar prototype showing events for two games and basic navigation
 (function(){
-  const eventsData = [
-    // sample League of Legends events
-    {id:1,game:'lol',title:'LCK Spring Finals',date:'2025-03-23',time:'18:00'},
-    {id:2,game:'lol',title:'MSI Group Stage',date:'2025-05-08',time:'14:00'},
-    {id:3,game:'lol',title:'Worlds Quarterfinal',date:'2025-10-27',time:'20:00'},
-    // sample Valorant events
-    {id:11,game:'valorant',title:'VCT Challengers',date:'2025-04-11',time:'16:00'},
-    {id:12,game:'valorant',title:'VALORANT Masters',date:'2025-06-02',time:'19:00'},
-    {id:13,game:'valorant',title:'Valorant Champions',date:'2025-11-15',time:'18:30'}
-  ];
+  // events removed as requested: keep empty array
+  const eventsData = [];
 
   const calendarEl = document.getElementById('calendar');
   const eventsEl = document.getElementById('events');
@@ -19,6 +11,7 @@
 
   // build a simple month view for current month
   function buildCalendar(year,month){
+    if(!calendarEl) return;
     calendarEl.innerHTML = '';
     const first = new Date(year,month,1);
     const startDay = first.getDay();
@@ -61,6 +54,7 @@
   }
 
   function listUpcoming(){
+    if(!eventsEl) return;
     eventsEl.innerHTML = '';
     const now = new Date();
     let list = [];
@@ -86,6 +80,59 @@
     });
   }
 
+  // populate past/future lists and current status/format on game pages
+  function populateGamePanels(){
+    if(pageFilter === 'all') return;
+    const now = new Date();
+    const todayStr = now.toISOString().slice(0,10);
+
+    const pastListEl = document.getElementById('pastList');
+    const futureListEl = document.getElementById('futureList');
+    const currentStatusEl = document.getElementById('currentStatus');
+    const currentFormatEl = document.getElementById('currentFormat');
+
+    if(!pastListEl || !futureListEl || !currentStatusEl || !currentFormatEl) return;
+
+    const gameEvents = eventsData.filter(ev=>ev.game===pageFilter).sort((a,b)=> new Date(b.date+'T'+b.time) - new Date(a.date+'T'+a.time));
+
+    const past = gameEvents.filter(ev=>ev.date < todayStr);
+    const future = gameEvents.filter(ev=>ev.date > todayStr);
+    const todayEvents = gameEvents.filter(ev=>ev.date === todayStr);
+
+    // past
+    pastListEl.innerHTML = '';
+    if(past.length===0){
+      pastListEl.innerHTML = '<li>과거 대회가 없습니다.</li>';
+    } else {
+      past.forEach(ev=>{ const li = document.createElement('li'); li.textContent = `${ev.date} · ${ev.title}`; pastListEl.appendChild(li); });
+    }
+
+    // future
+    futureListEl.innerHTML = '';
+    if(future.length===0){
+      futureListEl.innerHTML = '<li>다가오는 대회가 없습니다.</li>';
+    } else {
+      future.forEach(ev=>{ const li = document.createElement('li'); li.textContent = `${ev.date} · ${ev.title}`; futureListEl.appendChild(li); });
+    }
+
+    // current status: show today's events or a default
+    if(todayEvents.length===0){
+      currentStatusEl.textContent = '진행중인 대회가 없습니다.';
+      currentFormatEl.textContent = '진행 방식 정보가 없습니다.';
+    } else {
+      // if multiple, show first as main
+      const cur = todayEvents[0];
+      currentStatusEl.innerHTML = `<strong>${cur.title}</strong><br><small>${cur.date} ${cur.time}</small>`;
+      // basic format inference by keywords
+      let format = '토너먼트';
+      if(/Group|Group Stage|Round/i.test(cur.title)) format = '그룹 스테이지';
+      if(/Finals|Final/i.test(cur.title)) format = '결승전 (토너먼트)';
+      if(pageFilter==='lol') format = 'Bo5 / 토너먼트';
+      if(pageFilter==='valorant') format = 'Bo3 / 토너먼트';
+      currentFormatEl.textContent = format;
+    }
+  }
+
   // initial render: current month and month label
   const today = new Date();
   const monthNames = ['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월'];
@@ -95,5 +142,7 @@
   }
   buildCalendar(today.getFullYear(), today.getMonth());
   listUpcoming();
+  // populate game-specific panels (past/future/current) if on a game page
+  populateGamePanels();
 
 })();

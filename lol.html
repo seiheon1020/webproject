@@ -15,13 +15,21 @@
     </header>
 
     <main class="container">
-      <section class="calendar-section">
-        <div class="calendar-header"><strong id="monthLabel"></strong></div>
-        <div id="calendar"></div>
+      <section class="calendar-section" id="leftColumn">
+        <!-- past/future lists removed as requested -->
+        <div style="color:var(--muted);">해당 페이지에는 일정 목록이 없습니다.</div>
       </section>
-      <aside class="event-list" id="eventList">
-        <h2>LoL 일정</h2>
-        <ul id="events"></ul>
+
+      <aside class="event-list right-column">
+        <div class="status-top" id="currentStatusBox">
+          <h2>현재 진행중</h2>
+          <div id="currentStatus">진행중인 대회가 없습니다.</div>
+        </div>
+
+        <div class="status-bottom" id="currentFormatBox">
+          <h3>진행 방식</h3>
+          <div id="currentFormat">진행 방식 정보가 없습니다.</div>
+        </div>
       </aside>
     </main>
 
